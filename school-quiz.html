@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Quizzes - PracticalEdu</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #10b981;
+      --secondary: #004d40;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      min-height: 100vh;
+    }
+
+    .header {
+      background: var(--secondary);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .quiz-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-left: 4px solid var(--primary);
+      transition: all 0.3s ease;
+    }
+
+    .quiz-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
+    }
+
+    .quiz-card h3 {
+      color: var(--secondary);
+      margin-bottom: 10px;
+    }
+
+    .quiz-card .meta {
+      font-size: 0.85rem;
+      color: #999;
+      margin: 10px 0;
+    }
+
+    .quiz-card .badge {
+      display: inline-block;
+      background: #ecfdf5;
+      color: var(--primary);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background: linear-gradient(90deg, #34d399, var(--primary));
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+      margin-top: 20px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 200px;
+    }
+
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+
+    .quiz-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      overflow-y: auto;
+    }
+
+    .quiz-modal.show {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 95%;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #d1fae5;
+      padding-bottom: 15px;
+    }
+
+    .modal-header h2 {
+      color: var(--secondary);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .question {
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .question h4 {
+      color: var(--secondary);
+      margin-bottom: 15px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: white;
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .option:hover {
+      border-color: var(--primary);
+      background: #f0fdf4;
+    }
+
+    .option input[type="radio"] {
+      margin-right: 12px;
+      cursor: pointer;
+    }
+
+    .quiz-result {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      display: none;
+    }
+
+    .quiz-result.show {
+      display: block;
+    }
+
+    .quiz-result h3 {
+      color: var(--secondary);
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+
+    .score-display {
+      font-size: 3rem;
+      color: var(--primary);
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .no-quizzes {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    @media (max-width: 768px) {
+      .quiz-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-content {
+        width: 95vw;
+      }
+    }
+  </style>
+  <script src="common.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h1>📝 School Quizzes</h1>
+    <p>Test your environmental knowledge</p>
+  </div>
+
+  <div class="container">
+    <div class="quiz-grid" id="quizGrid"></div>
+    <button class="btn btn-secondary" onclick="window.location.href='school-dashboard.html'">← Back to Dashboard</button>
+  </div>
+
+  <!-- Quiz Modal -->
+  <div id="quizModal" class="quiz-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="quizTitle"></h2>
+        <button class="close-btn" onclick="closeQuiz()">×</button>
+      </div>
+
+      <div id="quizContainer"></div>
+      <div id="resultContainer" class="quiz-result"></div>
+
+      <button class="btn" id="submitBtn" style="width: 100%; margin-top: 20px;" onclick="submitQuiz()">Submit Quiz</button>
+    </div>
+  </div>
+
+  <script>
+    let currentQuiz = null;
+    let userAnswers = {};
+
+    function loadQuizzes() {
+      const quizzes = JSON.parse(localStorage.getItem('schoolQuizzes')) || [];
+
+      if (quizzes.length === 0) {
+        document.getElementById('quizGrid').innerHTML = '<div class="no-quizzes">No quizzes available yet</div>';
+        return;
+      }
+
+      let html = '';
+      quizzes.forEach(quiz => {
+        html += `
+          <div class="quiz-card">
+            <span class="badge">${quiz.difficulty.toUpperCase()}</span>
+            <h3>${quiz.title}</h3>
+            <p>${quiz.category}</p>
+            <div class="meta">
+              <i class="fas fa-question-circle"></i> ${quiz.questions.length} questions
+            </div>
+            <button class="btn" onclick="startQuiz(${quiz.id})">Start Quiz</button>
+          </div>
+        `;
+      });
+
+      document.getElementById('quizGrid').innerHTML = html;
+    }
+
+    function startQuiz(quizId) {
+      const quizzes = JSON.parse(localStorage.getItem('schoolQuizzes')) || [];
+      currentQuiz = quizzes.find(q => q.id === quizId);
+
+      if (!currentQuiz) return;
+
+      userAnswers = {};
+      document.getElementById('quizTitle').textContent = currentQuiz.title;
+
+      let html = '';
+      currentQuiz.questions.forEach((q, idx) => {
+        html += `
+          <div class="question">
+            <h4>Question ${idx + 1}: ${q.question}</h4>
+            <div class="options">
+              ${q.options.map((opt, optIdx) => `
+                <label class="option">
+                  <input type="radio" name="q${idx}" value="${optIdx}">
+                  <span>${opt}</span>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('quizContainer').innerHTML = html;
+      document.getElementById('resultContainer').innerHTML = '';
+      document.getElementById('resultContainer').classList.remove('show');
+      document.getElementById('submitBtn').style.display = 'block';
+      document.getElementById('quizModal').classList.add('show');
+    }
+
+    function submitQuiz() {
+      let score = 0;
+      let answered = 0;
+
+      currentQuiz.questions.forEach((q, idx) => {
+        const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+        if (selected) {
+          answered++;
+          if (parseInt(selected.value) === q.correctAnswer) {
+            score++;
+          }
+        }
+      });
+
+      if (answered !== currentQuiz.questions.length) {
+        alert('Please answer all questions before submitting');
+        return;
+      }
+
+      const totalScore = Math.round((score / currentQuiz.questions.length) * 100);
+      const user = getCurrentUser();
+
+      addUserScore(user.email, currentQuiz.id, totalScore, currentQuiz.category, currentQuiz.questions.length);
+
+      document.getElementById('quizContainer').style.display = 'none';
+      document.getElementById('submitBtn').style.display = 'none';
+
+      const resultHtml = `
+        <h3>Quiz Complete! 🎉</h3>
+        <div class="score-display">${score}/${currentQuiz.questions.length}</div>
+        <p style="font-size: 1.2rem; color: var(--primary);">${totalScore}%</p>
+        <p style="margin-top: 20px; color: #666;">Great job! Keep practicing to improve your score.</p>
+      `;
+
+      document.getElementById('resultContainer').innerHTML = resultHtml;
+      document.getElementById('resultContainer').classList.add('show');
+
+      setTimeout(() => {
+        closeQuiz();
+        loadQuizzes();
+      }, 3000);
+    }
+
+    function closeQuiz() {
+      document.getElementById('quizModal').classList.remove('show');
+      document.getElementById('quizContainer').style.display = 'block';
+    }
+
+    loadQuizzes();
+  </script>
+</body>
+</html>

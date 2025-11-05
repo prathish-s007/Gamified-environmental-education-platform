@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Games - PracticalEdu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #10b981;
+      --secondary: #004d40;
+      --accent: #a5d6a7;
+      --light-bg: #f9fffc;
+      --white: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      min-height: 100vh;
+    }
+
+    .header {
+      background: var(--secondary);
+      color: var(--white);
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      margin-bottom: 5px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .game-card {
+      background: var(--white);
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(16, 185, 129, 0.2);
+      border-color: var(--primary);
+    }
+
+    .game-card .icon {
+      font-size: 4rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+
+    .game-card h3 {
+      color: var(--secondary);
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+
+    .game-card .description {
+      color: #666;
+      font-size: 1rem;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .game-card .difficulty {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--secondary);
+      padding: 6px 15px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+    }
+
+    .game-card .points {
+      display: inline-block;
+      background: #ecfdf5;
+      color: var(--primary);
+      padding: 6px 15px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-left: 10px;
+      margin-bottom: 15px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 30px;
+      background: linear-gradient(90deg, #34d399, var(--primary));
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      margin-top: 15px;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-secondary {
+      display: block;
+      padding: 12px 30px;
+      background: #e5e7eb;
+      color: #374151;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 30px auto;
+      transition: all 0.3s ease;
+      width: 200px;
+      text-align: center;
+    }
+
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+      padding: 20px;
+      border-radius: 12px;
+      border: 2px solid var(--primary);
+      margin-bottom: 30px;
+      text-align: center;
+      color: var(--secondary);
+    }
+
+    @media (max-width: 768px) {
+      .games-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .game-card {
+        padding: 20px;
+      }
+
+      .game-card .icon {
+        font-size: 3rem;
+      }
+
+      .game-card h3 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+  <script src="common.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h1>🎮 Environmental Games</h1>
+    <p>Learn through fun interactive challenges</p>
+  </div>
+
+  <div class="container">
+    <div class="info-box">
+      <p>🎯 Play games to earn points and unlock achievements!</p>
+    </div>
+
+    <div class="games-grid">
+      <!-- Eco Match Game -->
+      <div class="game-card">
+        <div class="icon">
+          <i class="fas fa-recycle"></i>
+        </div>
+        <h3>♻️ Eco Match</h3>
+        <p>Match waste items with the correct recycling bin and learn proper waste management.</p>
+        <span class="difficulty">Easy</span>
+        <span class="points">+25 pts</span>
+        <a href="eco-match.html" class="btn">Play Now</a>
+      </div>
+
+      <!-- Green City Builder -->
+      <div class="game-card">
+        <div class="icon">
+          <i class="fas fa-city"></i>
+        </div>
+        <h3>🌍 Green City Builder</h3>
+        <p>Build your own eco-friendly city by making smart environmental choices.</p>
+        <span class="difficulty">Medium</span>
+        <span class="points">+50 pts</span>
+        <a href="eco-city.html" class="btn">Play Now</a>
+      </div>
+
+      <!-- Energy Saver -->
+      <div class="game-card">
+        <div class="icon">
+          <i class="fas fa-lightbulb"></i>
+        </div>
+        <h3>💡 Energy Saver</h3>
+        <p>Race against time to turn off unnecessary devices and save electricity.</p>
+        <span class="difficulty">Hard</span>
+        <span class="points">+75 pts</span>
+        <a href="energy-game.html" class="btn">Play Now</a>
+      </div>
+    </div>
+
+    <button class="btn-secondary" onclick="goBack()">← Back to Dashboard</button>
+  </div>
+
+  <script>
+    function goBack() {
+      const user = getCurrentUser();
+      if (user.level === 'school') {
+        window.location.href = 'school-dashboard.html';
+      } else {
+        window.location.href = 'college-dashboard-new.html';
+      }
+    }
+  </script>
+</body>
+</html>

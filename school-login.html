@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Login - PracticalEdu</title>
+  <style>
+    :root {
+      --primary: #10b981;
+      --secondary: #004d40;
+      --accent: #a5d6a7;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h2 {
+      color: var(--secondary);
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--secondary);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #34d399, var(--primary));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #d1fae5;
+    }
+
+    .links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      display: block;
+      margin: 10px 0;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      background: #ffcdd2;
+      color: #c62828;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .info {
+      background: #c8e6c9;
+      color: #1b5e20;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+  </style>
+  <script src="common.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>🎓 School Login</h2>
+      <p>Grades 9-12 Environmental Learning</p>
+    </div>
+
+    <div class="info">
+      📌 Demo: Use any email and password (min 4 chars)
+    </div>
+
+    <div class="error" id="error"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="your@email.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter password" required>
+      </div>
+
+      <button type="submit" class="btn">Login to Dashboard</button>
+    </form>
+
+    <div class="links">
+      <a href="index.html">← Back to Role Selection</a>
+      <a href="signup.html">Create New Account</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        showError('Please fill all fields');
+        return;
+      }
+
+      if (password.length < 4) {
+        showError('Password must be at least 4 characters');
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      let user = users.find(u => u.email === email && u.password === password && u.level === 'school');
+
+      if (!user) {
+        user = {
+          name: email.split('@')[0],
+          email: email,
+          password: password,
+          level: 'school',
+          institution: 'School',
+          role: 'student',
+          totalScore: 0,
+          joinDate: new Date().toISOString()
+        };
+
+        users.push(user);
+        localStorage.setItem('users', JSON.stringify(users));
+        
+        addNotification('school', 'Welcome to PracticalEdu! Start your environmental learning journey.', 'welcome');
+      }
+
+      localStorage.setItem('currentUser', email);
+      window.location.href = 'school-dashboard.html';
+    });
+
+    function showError(msg) {
+      const errorDiv = document.getElementById('error');
+      errorDiv.textContent = msg;
+      errorDiv.style.display = 'block';
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

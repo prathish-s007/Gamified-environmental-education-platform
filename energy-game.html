@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Energy Saver - PracticalEdu</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #10b981;
+      --secondary: #004d40;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .game-container {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      padding: 30px;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      color: var(--secondary);
+      margin-bottom: 10px;
+      font-size: 2rem;
+    }
+
+    .game-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stat {
+      background: #f0fdf4;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      border: 2px solid var(--primary);
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      color: var(--primary);
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    .timer-display {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .timer {
+      font-size: 2.5rem;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .timer.warning {
+      color: #f59e0b;
+    }
+
+    .timer.danger {
+      color: #ef4444;
+    }
+
+    .devices-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .device {
+      background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      border: 3px solid #d1fae5;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .device.active {
+      border-color: var(--primary);
+      background: #f0fdf4;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .device.off {
+      border-color: #d1d5db;
+      background: #f9fafb;
+      opacity: 0.7;
+    }
+
+    .device-icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .device-name {
+      font-weight: 600;
+      color: var(--secondary);
+      margin-bottom: 5px;
+    }
+
+    .device-status {
+      font-size: 0.85rem;
+      padding: 5px 10px;
+      border-radius: 5px;
+      display: inline-block;
+      margin-top: 8px;
+    }
+
+    .device-status.on {
+      background: #fecaca;
+      color: #7f1d1d;
+    }
+
+    .device-status.off {
+      background: #bbf7d0;
+      color: #15803d;
+    }
+
+    .game-info {
+      background: #f0fdf4;
+      padding: 15px;
+      border-radius: 10px;
+      border: 2px solid var(--primary);
+      margin-bottom: 30px;
+      text-align: center;
+      color: var(--secondary);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #34d399, var(--primary));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .result-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+      text-align: center;
+      z-index: 1000;
+      min-width: 300px;
+    }
+
+    .result-modal.show {
+      display: block;
+    }
+
+    .result-score {
+      font-size: 3rem;
+      color: var(--primary);
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .devices-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .game-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <script src="common.js"></script>
+</head>
+<body>
+  <div class="game-container">
+    <div class="header">
+      <h1>💡 Energy Saver</h1>
+      <p>Turn off all devices before time runs out!</p>
+    </div>
+
+    <div class="game-stats">
+      <div class="stat">
+        <div class="stat-label">Score</div>
+        <div class="stat-value" id="score">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Turned Off</div>
+        <div class="stat-value" id="turnedOff">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Remaining</div>
+        <div class="stat-value" id="remaining">6</div>
+      </div>
+    </div>
+
+    <div class="timer-display">
+      <div style="color: #666; margin-bottom: 5px;">⏱️ Time Left</div>
+      <div class="timer" id="timer">30</div>
+    </div>
+
+    <div class="game-info">
+      🎯 Click on each device to turn it OFF before time runs out!
+    </div>
+
+    <div class="devices-grid" id="devicesContainer"></div>
+
+    <div class="buttons">
+      <button class="btn btn-primary" id="startBtn" onclick="startGame()">Start Game</button>
+      <button class="btn btn-secondary" onclick="goBack()">Go Back</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="result-modal" id="resultModal">
+    <h2 id="resultTitle">Game Over!</h2>
+    <div class="result-score" id="finalScore">0</div>
+    <p id="resultMessage" style="margin: 15px 0; color: #666;"></p>
+    <button class="btn btn-primary" onclick="closeResult()">Try Again</button>
+  </div>
+
+  <script>
+    const devices = [
+      { id: 1, name: 'Light', icon: '💡' },
+      { id: 2, name: 'TV', icon: '📺' },
+      { id: 3, name: 'Computer', icon: '🖥️' },
+      { id: 4, name: 'AC', icon: '❄️' },
+      { id: 5, name: 'Heater', icon: '🔥' },
+      { id: 6, name: 'Microwave', icon: '🔪' }
+    ];
+
+    let gameActive = false;
+    let timeLeft = 30;
+    let score = 0;
+    let turnedOff = 0;
+    let timerInterval;
+    let deviceStates = {};
+
+    function initDevices() {
+      const container = document.getElementById('devicesContainer');
+      container.innerHTML = '';
+
+      devices.forEach(device => {
+        const div = document.createElement('div');
+        div.className = 'device active';
+        div.id = 'device-' + device.id;
+        div.onclick = function() { toggleDevice(device.id); };
+        div.innerHTML = `
+          <div class="device-icon">${device.icon}</div>
+          <div class="device-name">${device.name}</div>
+          <div class="device-status on">ON</div>
+        `;
+
+        container.appendChild(div);
+        deviceStates[device.id] = true; // ON
+      });
+    }
+
+    function toggleDevice(deviceId) {
+      if (!gameActive) return;
+
+      const wasOn = deviceStates[deviceId];
+      if (wasOn) {
+        deviceStates[deviceId] = false;
+
+        const deviceEl = document.getElementById('device-' + deviceId);
+        deviceEl.classList.remove('active');
+        deviceEl.classList.add('off');
+        deviceEl.querySelector('.device-status').textContent = 'OFF';
+        deviceEl.querySelector('.device-status').classList.remove('on');
+        deviceEl.querySelector('.device-status').classList.add('off');
+
+        score += 20;
+        turnedOff++;
+
+        updateStats();
+
+        if (turnedOff === devices.length) {
+          endGame(true);
+        }
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('score').textContent = score;
+      document.getElementById('turnedOff').textContent = turnedOff;
+      document.getElementById('remaining').textContent = devices.length - turnedOff;
+    }
+
+    function startGame() {
+      gameActive = true;
+      timeLeft = 30;
+      score = 0;
+      turnedOff = 0;
+      deviceStates = {};
+
+      document.getElementById('startBtn').disabled = true;
+
+      initDevices();
+      updateStats();
+
+      timerInterval = setInterval(function() {
+        timeLeft--;
+
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = timeLeft;
+
+        if (timeLeft <= 10) {
+          timerEl.classList.add('warning');
+        }
+        if (timeLeft <= 5) {
+          timerEl.classList.remove('warning');
+          timerEl.classList.add('danger');
+        }
+
+        if (timeLeft <= 0) {
+          endGame(false);
+        }
+      }, 1000);
+    }
+
+    function endGame(won) {
+      gameActive = false;
+      clearInterval(timerInterval);
+
+      const user = getCurrentUser();
+      if (user) {
+        addUserScore(user.email, 'energy-game', score, 'games', devices.length);
+      }
+
+      document.getElementById('finalScore').textContent = score;
+
+      if (won) {
+        document.getElementById('resultTitle').textContent = '🎉 You Won!';
+        document.getElementById('resultMessage').textContent = 
+          `Excellent! You turned off all devices in time!`;
+      } else {
+        document.getElementById('resultTitle').textContent = '⏰ Time\'s Up!';
+        document.getElementById('resultMessage').textContent = 
+          `You turned off ${turnedOff}/${devices.length} devices. Try again!`;
+      }
+
+      document.getElementById('resultModal').classList.add('show');
+      document.getElementById('overlay').classList.add('show');
+    }
+
+    function closeResult() {
+      document.getElementById('resultModal').classList.remove('show');
+      document.getElementById('overlay').classList.remove('show');
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('timer').classList.remove('warning', 'danger');
+    }
+
+    function goBack() {
+      const user = getCurrentUser();
+      if (user.level === 'school') {
+        window.location.href = 'school-dashboard.html';
+      } else {
+        window.location.href = 'college-dashboard-new.html';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeStorage();
+      initDevices();
+    });
+  </script>
+</body>
+</html>

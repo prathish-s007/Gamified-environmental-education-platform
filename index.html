@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PracticalEdu - Environmental Education Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #10b981;
+      --secondary: #004d40;
+      --accent: #a5d6a7;
+      --light-bg: #f9fffc;
+      --white: #ffffff;
+      --text-dark: #1f2937;
+      --text-light: #666;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      min-height: 100vh;
+    }
+
+    .header {
+      background: var(--secondary);
+      color: var(--white);
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .hero h2 {
+      color: var(--secondary);
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      color: var(--text-light);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto 50px;
+    }
+
+    .role-selection {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      max-width: 1000px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+    }
+
+    .role-card {
+      background: var(--white);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .role-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.2);
+      border-color: var(--primary);
+    }
+
+    .role-card .icon {
+      font-size: 3.5rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+
+    .role-card h3 {
+      color: var(--secondary);
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+
+    .role-card p {
+      color: var(--text-light);
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 30px;
+      background: linear-gradient(90deg, #34d399, var(--primary));
+      color: var(--white);
+      text-decoration: none;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .admin-section {
+      text-align: center;
+      margin-top: 80px;
+      padding-top: 40px;
+      border-top: 2px solid #d1fae5;
+    }
+
+    .admin-section h4 {
+      color: var(--secondary);
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .admin-btn {
+      background: linear-gradient(90deg, #fbbf24, #f59e0b);
+      color: var(--secondary);
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    .admin-btn:hover {
+      background: linear-gradient(90deg, #f59e0b, #d97706);
+    }
+
+    .footer {
+      background: var(--secondary);
+      color: var(--white);
+      text-align: center;
+      padding: 20px;
+      margin-top: 60px;
+    }
+
+    @media (max-width: 768px) {
+      .hero h2 {
+        font-size: 1.8rem;
+      }
+
+      .role-selection {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .role-card {
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🌍 PracticalEdu</h1>
+    <p>Gamified Environmental Education Platform</p>
+  </div>
+
+  <div class="hero">
+    <h2>Choose Your Role</h2>
+    <p>Select your user type to access personalized learning environment</p>
+
+    <div class="role-selection">
+      <!-- School Student -->
+      <div class="role-card" onclick="goToLogin('school')">
+        <div class="icon">
+          <i class="fas fa-user-graduate"></i>
+        </div>
+        <h3>School Student</h3>
+        <p>Grades 9-12 Environmental Learning</p>
+        <ul style="text-align: left; font-size: 0.9rem; color: var(--text-light); margin: 15px 0;">
+          <li>✓ Interactive Quizzes</li>
+          <li>✓ Educational Games</li>
+          <li>✓ Leaderboard</li>
+          <li>✓ Achievements</li>
+        </ul>
+        <button class="btn">Enter →</button>
+      </div>
+
+      <!-- College Student -->
+      <div class="role-card" onclick="goToLogin('college')">
+        <div class="icon">
+          <i class="fas fa-university"></i>
+        </div>
+        <h3>College Student</h3>
+        <p>Advanced Environmental Studies</p>
+        <ul style="text-align: left; font-size: 0.9rem; color: var(--text-light); margin: 15px 0;">
+          <li>✓ Advanced Quizzes</li>
+          <li>✓ Research Library</li>
+          <li>✓ Project Showcase</li>
+          <li>✓ AI Chatbot</li>
+        </ul>
+        <button class="btn">Enter →</button>
+      </div>
+
+      <!-- Admin -->
+      <div class="role-card" onclick="goToLogin('admin')">
+        <div class="icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3>Administrator</h3>
+        <p>Platform Management</p>
+        <ul style="text-align: left; font-size: 0.9rem; color: var(--text-light); margin: 15px 0;">
+          <li>✓ Quiz Management</li>
+          <li>✓ Analytics</li>
+          <li>✓ Notifications</li>
+          <li>✓ User Management</li>
+        </ul>
+        <button class="btn">Enter →</button>
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <h4>New User? Create Account First</h4>
+      <button class="btn" onclick="window.location.href='signup.html'">Sign Up Here</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2025 PracticalEdu. All Rights Reserved.</p>
+  </div>
+
+  <script>
+    function goToLogin(role) {
+      if (role === 'school') {
+        window.location.href = 'school-login.html';
+      } else if (role === 'college') {
+        window.location.href = 'college-login.html';
+      } else if (role === 'admin') {
+        window.location.href = 'admin-login.html';
+      }
+    }
+  </script>
+</body>
+</html>

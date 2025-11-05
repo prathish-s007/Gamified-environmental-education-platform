@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - PracticalEdu</title>
+  <style>
+    :root {
+      --primary: #10b981;
+      --secondary: #004d40;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h2 {
+      color: var(--secondary);
+      margin-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--secondary);
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #34d399, var(--primary));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #d1fae5;
+    }
+
+    .links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      display: block;
+      margin: 10px 0;
+    }
+
+    .error {
+      background: #ffcdd2;
+      color: #c62828;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .success {
+      background: #c8e6c9;
+      color: #1b5e20;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+  </style>
+  <script src="common.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Create Account</h2>
+      <p>Join PracticalEdu Community</p>
+    </div>
+
+    <div class="error" id="error"></div>
+    <div class="success" id="success"></div>
+
+    <form id="signupForm">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="Your name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="your@email.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Min 4 characters" required>
+      </div>
+
+      <div class="form-group">
+        <label for="level">I am a</label>
+        <select id="level" required>
+          <option value="">Select Option</option>
+          <option value="school">School Student (9-12)</option>
+          <option value="college">College/University Student</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="institution">School/College Name</label>
+        <input type="text" id="institution" placeholder="Your institution" required>
+      </div>
+
+      <button type="submit" class="btn">Create Account</button>
+    </form>
+
+    <div class="links">
+      <a href="index.html">← Back to Home</a>
+      <a href="school-login.html">Already have an account? Login</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const level = document.getElementById('level').value;
+      const institution = document.getElementById('institution').value.trim();
+
+      if (!name || !email || !password || !level || !institution) {
+        showError('Please fill all fields');
+        return;
+      }
+
+      if (password.length < 4) {
+        showError('Password must be at least 4 characters');
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+
+      if (users.some(u => u.email === email)) {
+        showError('Email already registered');
+        return;
+      }
+
+      users.push({
+        name: name,
+        email: email,
+        password: password,
+        level: level,
+        institution: institution,
+        role: 'student',
+        totalScore: 0,
+        joinDate: new Date().toISOString()
+      });
+
+      localStorage.setItem('users', JSON.stringify(users));
+
+      showSuccess('Account created! Redirecting to login...');
+      setTimeout(() => {
+        if (level === 'school') {
+          window.location.href = 'school-login.html';
+        } else {
+          window.location.href = 'college-login.html';
+        }
+      }, 2000);
+    });
+
+    function showError(msg) {
+      const div = document.getElementById('error');
+      div.textContent = msg;
+      div.style.display = 'block';
+      setTimeout(() => { div.style.display = 'none'; }, 3000);
+    }
+
+    function showSuccess(msg) {
+      const div = document.getElementById('success');
+      div.textContent = msg;
+      div.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

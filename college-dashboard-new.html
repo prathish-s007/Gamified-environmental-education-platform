@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Dashboard - PracticalEdu</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #10b981;
+      --secondary: #004d40;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      min-height: 100vh;
+    }
+
+    .header {
+      background: var(--secondary);
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 1.8rem;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .notification-bell {
+      position: relative;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ef4444;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .chatbot-icon {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      color: white;
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+
+    .chatbot-icon:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .logout-btn {
+      background: #ef4444;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .user-info {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      border: 2px solid #d1fae5;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
+      border-color: var(--primary);
+    }
+
+    .card .icon {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      color: var(--secondary);
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background: linear-gradient(90deg, #34d399, var(--primary));
+      color: white;
+      text-decoration: none;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Chatbot Styles */
+    .chatbot-window {
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 350px;
+      height: 500px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      display: none;
+      flex-direction: column;
+      z-index: 999;
+    }
+
+    .chatbot-window.show {
+      display: flex;
+    }
+
+    .chatbot-header {
+      background: var(--primary);
+      color: white;
+      padding: 15px;
+      border-radius: 12px 12px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chatbot-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      background: #f9fafb;
+    }
+
+    .chat-message {
+      margin-bottom: 12px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-message.user {
+      justify-content: flex-end;
+    }
+
+    .chat-text {
+      max-width: 80%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+    .chat-message.bot .chat-text {
+      background: white;
+      color: var(--secondary);
+      border: 1px solid #d1fae5;
+    }
+
+    .chat-message.user .chat-text {
+      background: var(--primary);
+      color: white;
+    }
+
+    .chatbot-input {
+      padding: 12px;
+      border-top: 1px solid #d1d5db;
+      display: flex;
+      gap: 10px;
+    }
+
+    .chatbot-input input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .chatbot-input button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .notification-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+
+    .notification-modal.show {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 95%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #d1fae5;
+      padding-bottom: 15px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .notification-item {
+      background: #f9fafb;
+      padding: 15px;
+      border-left: 4px solid var(--primary);
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chatbot-window {
+        width: 90vw;
+        height: 400px;
+        bottom: 80px;
+        right: 5px;
+        left: auto;
+      }
+
+      .chatbot-icon {
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+  </style>
+  <script src="common.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h1>🎓 College Dashboard</h1>
+    <div class="header-right">
+      <div class="notification-bell" onclick="openNotifications()">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge" id="notificationCount" style="display: none;">0</span>
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="user-info">
+      <h3>Welcome, <span id="userName">Student</span>!</h3>
+      <p><strong>Institution:</strong> <span id="userInstitution">College</span></p>
+      <p><strong>Total Points:</strong> <span id="userScore">0</span></p>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card" onclick="location.href='college-quiz-new.html'">
+        <div class="icon">
+          <i class="fas fa-question-circle"></i>
+        </div>
+        <h3>Advanced Quizzes</h3>
+        <p>Environmental research & science</p>
+        <button class="btn">Take Quiz</button>
+      </div>
+
+      <div class="card" onclick="location.href='game.html'">
+        <div class="icon">
+          <i class="fas fa-gamepad"></i>
+        </div>
+        <h3>Games</h3>
+        <p>Learn through interactive challenges</p>
+        <button class="btn">Play Games</button>
+      </div>
+
+      
+
+      <div class="card" onclick="location.href='college-achievements.html'">
+        <div class="icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <h3>Achievements</h3>
+        <p>Leaderboard and badges</p>
+        <button class="btn">View Rankings</button>
+      </div>
+
+      <div class="card" onclick="location.href='research-library.html'">
+        <div class="icon">
+          <i class="fas fa-book"></i>
+        </div>
+        <h3>Research Library</h3>
+        <p>Environmental resources</p>
+        <button class="btn">Explore</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot -->
+  <div class="chatbot-icon" onclick="toggleChatbot()">
+    <i class="fas fa-comments"></i>
+  </div>
+
+  <div class="chatbot-window" id="chatbotWindow">
+    <div class="chatbot-header">
+      <h3>🤖 EcoBot Assistant</h3>
+      <button class="close-btn" onclick="toggleChatbot()">×</button>
+    </div>
+    <div class="chatbot-body" id="chatbotBody">
+      <div class="chat-message bot">
+        <div class="chat-text">Hi! I'm EcoBot. Ask me about environmental topics or how to use the platform!</div>
+      </div>
+    </div>
+    <div class="chatbot-input">
+      <input type="text" id="chatInput" placeholder="Type your message...">
+      <button onclick="sendChatMessage()">Send</button>
+    </div>
+  </div>
+
+  <!-- Notifications Modal -->
+  <div id="notificationsModal" class="notification-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📢 Notifications</h2>
+        <button class="close-btn" onclick="closeNotifications()">×</button>
+      </div>
+      <div id="notificationsList"></div>
+    </div>
+  </div>
+
+  <script>
+    const chatbotResponses = {
+      'quiz': 'You can take advanced quizzes on various environmental topics like climate change, biodiversity, and sustainability.',
+      'game': 'We have interactive games like Eco Match, Green City Builder, and Energy Saver to learn environmental concepts.',
+      'project': 'Upload your environmental research projects and share them with the community to earn points!',
+      'leaderboard': 'Check the leaderboard to see your ranking among college students and track your progress.',
+      'research': 'Access our research library with links to environmental journals, UNESCO resources, and more.',
+      'badge': 'Earn badges by achieving high scores in quizzes and maintaining your ranking on the leaderboard.',
+      'help': 'You can ask me about quizzes, games, projects, leaderboard, research, or badges. What would you like to know?',
+      'hi': 'Hello! Welcome to PracticalEdu. How can I help you today?',
+      'hello': 'Hello! I\'m here to help you navigate the platform. What do you need?'
+    };
+
+    function loadUserInfo() {
+      const user = getCurrentUser();
+      if (!user || user.level !== 'college') {
+        window.location.href = 'college-login.html';
+        return;
+      }
+
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userInstitution').textContent = user.institution || 'College';
+      document.getElementById('userScore').textContent = user.totalScore || 0;
+
+      updateNotificationBadge();
+    }
+
+    function updateNotificationBadge() {
+      const count = getUnreadCount('college');
+      const badge = document.getElementById('notificationCount');
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function toggleChatbot() {
+      document.getElementById('chatbotWindow').classList.toggle('show');
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+
+      if (!message) return;
+
+      const chatbotBody = document.getElementById('chatbotBody');
+
+      const userMsgDiv = document.createElement('div');
+      userMsgDiv.className = 'chat-message user';
+      userMsgDiv.innerHTML = `<div class="chat-text">${message}</div>`;
+      chatbotBody.appendChild(userMsgDiv);
+
+      let response = 'I\'m not sure how to help with that. Try asking about: quiz, game, project, leaderboard, research, badge, or help.';
+
+      for (const key in chatbotResponses) {
+        if (message.toLowerCase().includes(key)) {
+          response = chatbotResponses[key];
+          break;
+        }
+      }
+
+      setTimeout(() => {
+        const botMsgDiv = document.createElement('div');
+        botMsgDiv.className = 'chat-message bot';
+        botMsgDiv.innerHTML = `<div class="chat-text">${response}</div>`;
+        chatbotBody.appendChild(botMsgDiv);
+        chatbotBody.scrollTop = chatbotBody.scrollHeight;
+      }, 500);
+
+      input.value = '';
+      chatbotBody.scrollTop = chatbotBody.scrollHeight;
+    }
+
+    function openNotifications() {
+      const notifications = getNotifications('college');
+      let html = '';
+
+      if (notifications.length === 0) {
+        html = '<p style="text-align: center; color: #999;">No notifications</p>';
+      } else {
+        notifications
+          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+          .forEach(n => {
+            html += `
+              <div class="notification-item" onclick="markNotificationAsRead('college', ${n.id})">
+                <p>${n.message}</p>
+                <div style="font-size: 0.85rem; color: #999; margin-top: 5px;">${new Date(n.timestamp).toLocaleString()}</div>
+              </div>
+            `;
+          });
+      }
+
+      document.getElementById('notificationsList').innerHTML = html;
+      document.getElementById('notificationsModal').classList.add('show');
+      updateNotificationBadge();
+    }
+
+    function closeNotifications() {
+      document.getElementById('notificationsModal').classList.remove('show');
+    }
+
+    // Allow sending message with Enter key
+    document.addEventListener('DOMContentLoaded', function() {
+      const chatInput = document.getElementById('chatInput');
+      if (chatInput) {
+        chatInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            sendChatMessage();
+          }
+        });
+      }
+    });
+
+    loadUserInfo();
+  </script>
+</body>
+</html>

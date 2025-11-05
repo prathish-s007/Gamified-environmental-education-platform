@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Green City Builder - PracticalEdu</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #10b981;
+      --secondary: #004d40;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .game-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      color: var(--secondary);
+      margin-bottom: 10px;
+      font-size: 2rem;
+    }
+
+    .game-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stat {
+      background: #f0fdf4;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      border: 2px solid var(--primary);
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      color: var(--primary);
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    .buildings-section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      color: var(--secondary);
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .buildings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .building-btn {
+      background: white;
+      border: 2px solid #d1d5db;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .building-btn:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .building-icon {
+      font-size: 2rem;
+      margin-bottom: 5px;
+    }
+
+    .city-grid {
+      background: linear-gradient(45deg, #e0f2fe 25%, transparent 25%, transparent 75%, #e0f2fe 75%, #e0f2fe),
+                  linear-gradient(45deg, #e0f2fe 25%, transparent 25%, transparent 75%, #e0f2fe 75%, #e0f2fe);
+      background-size: 40px 40px;
+      background-position: 0 0, 20px 20px;
+      background-color: #b3e5fc;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 30px;
+      min-height: 300px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      align-content: flex-start;
+    }
+
+    .city-cell {
+      background: white;
+      border: 2px dashed #d1d5db;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 2rem;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .city-cell:hover {
+      border-color: var(--primary);
+      background: #f0fdf4;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #34d399, var(--primary));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+
+    .result-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+      text-align: center;
+      z-index: 1000;
+      min-width: 300px;
+    }
+
+    .result-modal.show {
+      display: block;
+    }
+
+    .result-score {
+      font-size: 3rem;
+      color: var(--primary);
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .game-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .buildings-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .city-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+  <script src="common.js"></script>
+</head>
+<body>
+  <div class="game-container">
+    <div class="header">
+      <h1>🌍 Green City Builder</h1>
+      <p>Build an eco-friendly city!</p>
+    </div>
+
+    <div class="game-stats">
+      <div class="stat">
+        <div class="stat-label">Score</div>
+        <div class="stat-value" id="score">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Buildings</div>
+        <div class="stat-value" id="buildings">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Eco Points</div>
+        <div class="stat-value" id="ecoPoints">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Happiness</div>
+        <div class="stat-value" id="happiness">50%</div>
+      </div>
+    </div>
+
+    <div class="buildings-section">
+      <div class="section-title">🏗️ Available Buildings</div>
+      <div class="buildings-grid">
+        <button class="building-btn" onclick="selectBuilding('tree', '🌳', 10)">
+          <div class="building-icon">🌳</div>
+          <div>Tree</div>
+        </button>
+        <button class="building-btn" onclick="selectBuilding('solar', '☀️', 20)">
+          <div class="building-icon">☀️</div>
+          <div>Solar Panel</div>
+        </button>
+        <button class="building-btn" onclick="selectBuilding('wind', '💨', 20)">
+          <div class="building-icon">💨</div>
+          <div>Wind Turbine</div>
+        </button>
+        <button class="building-btn" onclick="selectBuilding('water', '💧', 15)">
+          <div class="building-icon">💧</div>
+          <div>Water Purifier</div>
+        </button>
+        <button class="building-btn" onclick="selectBuilding('park', '🌲', 25)">
+          <div class="building-icon">🌲</div>
+          <div>Park</div>
+        </button>
+        <button class="building-btn" onclick="selectBuilding('recycle', '♻️', 15)">
+          <div class="building-icon">♻️</div>
+          <div>Recycling Center</div>
+        </button>
+      </div>
+    </div>
+
+    <div class="buildings-section">
+      <div class="section-title">🏙️ Your City</div>
+      <div class="city-grid" id="cityGrid"></div>
+    </div>
+
+    <div class="buttons">
+      <button class="btn btn-primary" onclick="finishGame()">Finish Game</button>
+      <button class="btn btn-secondary" onclick="goBack()">Go Back</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="result-modal" id="resultModal">
+    <h2>City Complete!</h2>
+    <div class="result-score" id="finalScore">0</div>
+    <p id="resultMessage" style="margin: 15px 0; color: #666;"></p>
+    <button class="btn btn-primary" onclick="closeResult()">Great Job!</button>
+  </div>
+
+  <script>
+    let selectedBuilding = null;
+    let score = 0;
+    let buildingsCount = 0;
+    let ecoPoints = 0;
+    let cityMap = {};
+
+    const buildingValues = {
+      'tree': { eco: 10, happiness: 5 },
+      'solar': { eco: 20, happiness: 8 },
+      'wind': { eco: 20, happiness: 8 },
+      'water': { eco: 15, happiness: 6 },
+      'park': { eco: 25, happiness: 10 },
+      'recycle': { eco: 15, happiness: 7 }
+    };
+
+    function initGame() {
+      const cityGrid = document.getElementById('cityGrid');
+      cityGrid.innerHTML = '';
+
+      for (let i = 0; i < 25; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'city-cell';
+        cell.id = 'cell-' + i;
+        cell.onclick = function() { placeBuilding(i); };
+        cityGrid.appendChild(cell);
+        cityMap[i] = null;
+      }
+    }
+
+    function selectBuilding(type, icon, points) {
+      selectedBuilding = { type, icon, points };
+    }
+
+    function placeBuilding(cellId) {
+      if (!selectedBuilding) {
+        alert('Select a building first!');
+        return;
+      }
+
+      if (cityMap[cellId] !== null) {
+        alert('Cell already occupied!');
+        return;
+      }
+
+      cityMap[cellId] = selectedBuilding;
+
+      const cell = document.getElementById('cell-' + cellId);
+      cell.innerHTML = selectedBuilding.icon;
+      cell.style.background = '#f0fdf4';
+
+      buildingsCount++;
+      score += selectedBuilding.points;
+      ecoPoints += buildingValues[selectedBuilding.type].eco;
+
+      updateStats();
+    }
+
+    function updateStats() {
+      document.getElementById('score').textContent = score;
+      document.getElementById('buildings').textContent = buildingsCount;
+      document.getElementById('ecoPoints').textContent = ecoPoints;
+
+      const happiness = Math.min(100, 50 + (buildingsCount * 5));
+      document.getElementById('happiness').textContent = happiness + '%';
+    }
+
+    function finishGame() {
+      const user = getCurrentUser();
+      if (user) {
+        addUserScore(user.email, 'eco-city', score, 'games', 10);
+      }
+
+      document.getElementById('finalScore').textContent = score;
+      document.getElementById('resultMessage').textContent = 
+        `You built ${buildingsCount} eco-friendly buildings and earned ${ecoPoints} eco points!`;
+
+      document.getElementById('resultModal').classList.add('show');
+      document.getElementById('overlay').classList.add('show');
+    }
+
+    function closeResult() {
+      goBack();
+    }
+
+    function goBack() {
+      const user = getCurrentUser();
+      if (user.level === 'school') {
+        window.location.href = 'school-dashboard.html';
+      } else {
+        window.location.href = 'college-dashboard-new.html';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeStorage();
+      initGame();
+    });
+  </script>
+</body>
+</html>

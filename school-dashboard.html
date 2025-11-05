@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Dashboard - PracticalEdu</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #10b981;
+      --secondary: #004d40;
+      --accent: #a5d6a7;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      min-height: 100vh;
+    }
+
+    .header {
+      background: var(--secondary);
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 1.8rem;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .notification-bell {
+      position: relative;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ef4444;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .logout-btn {
+      background: #ef4444;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .user-info {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .user-info h3 {
+      color: var(--secondary);
+      margin-bottom: 10px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      border: 2px solid #d1fae5;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
+      border-color: var(--primary);
+    }
+
+    .card .icon {
+      font-size: 3.5rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      color: var(--secondary);
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background: linear-gradient(90deg, #34d399, var(--primary));
+      color: white;
+      text-decoration: none;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 15px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+
+    .modal.show {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 95%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #d1fae5;
+      padding-bottom: 15px;
+    }
+
+    .modal-header h2 {
+      color: var(--secondary);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .notification-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      background: #f9fafb;
+      padding: 15px;
+      border-left: 4px solid var(--primary);
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .notification-item .time {
+      font-size: 0.85rem;
+      color: #999;
+      margin-top: 5px;
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .leaderboard-table thead {
+      background: var(--secondary);
+      color: white;
+    }
+
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 15px;
+      text-align: left;
+    }
+
+    .leaderboard-table tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .medal {
+      font-size: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+
+      .header-right {
+        width: 100%;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-content {
+        width: 95vw;
+      }
+    }
+  </style>
+  <script src="common.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h1>🎓 School Dashboard</h1>
+    <div class="header-right">
+      <div class="notification-bell" onclick="openNotifications()">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge" id="notificationCount" style="display: none;">0</span>
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="user-info">
+      <h3>Welcome, <span id="userName">Student</span>!</h3>
+      <p><strong>Institution:</strong> <span id="userInstitution">School</span></p>
+      <p><strong>Total Points:</strong> <span id="userScore">0</span></p>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card" onclick="location.href='school-quiz.html'">
+        <div class="icon">
+          <i class="fas fa-question-circle"></i>
+        </div>
+        <h3>Quizzes</h3>
+        <p>Test your environmental knowledge</p>
+        <button class="btn">Start Quiz</button>
+      </div>
+
+      <div class="card" onclick="location.href='game.html'">
+        <div class="icon">
+          <i class="fas fa-gamepad"></i>
+        </div>
+        <h3>Games</h3>
+        <p>Learn through interactive challenges</p>
+        <button class="btn">Play Games</button>
+      </div>
+
+      <div class="card" onclick="location.href='achievements.html'">
+        <div class="icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <h3>Leaderboard</h3>
+        <p>View your ranking and achievements</p>
+        <button class="btn">View Leaderboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications Modal -->
+  <div id="notificationsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📢 Notifications</h2>
+        <button class="close-btn" onclick="closeNotifications()">×</button>
+      </div>
+      <div class="notification-list" id="notificationsList"></div>
+    </div>
+  </div>
+
+  <script>
+    function loadUserInfo() {
+      const user = getCurrentUser();
+      if (!user) {
+        window.location.href = 'school-login.html';
+        return;
+      }
+
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userInstitution').textContent = user.institution || 'School';
+      document.getElementById('userScore').textContent = user.totalScore || 0;
+
+      updateNotificationBadge();
+    }
+
+    function updateNotificationBadge() {
+      const count = getUnreadCount('school');
+      const badge = document.getElementById('notificationCount');
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function openNotifications() {
+      const notifications = getNotifications('school');
+      let html = '';
+
+      if (notifications.length === 0) {
+        html = '<p style="text-align: center; color: #999;">No notifications</p>';
+      } else {
+        notifications
+          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+          .forEach(n => {
+            html += `
+              <div class="notification-item" onclick="markNotificationAsRead('school', ${n.id})">
+                <p>${n.message}</p>
+                <div class="time">${new Date(n.timestamp).toLocaleString()}</div>
+              </div>
+            `;
+          });
+      }
+
+      document.getElementById('notificationsList').innerHTML = html;
+      document.getElementById('notificationsModal').classList.add('show');
+      updateNotificationBadge();
+    }
+
+    function closeNotifications() {
+      document.getElementById('notificationsModal').classList.remove('show');
+    }
+
+    // Close modal on outside click
+    window.onclick = function(event) {
+      const modal = document.getElementById('notificationsModal');
+      if (event.target === modal) {
+        closeNotifications();
+      }
+    }
+
+    loadUserInfo();
+  </script>
+</body>
+</html>
